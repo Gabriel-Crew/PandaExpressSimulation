@@ -8,6 +8,33 @@ Notes:
     Determin different batch sizes for different items? C1,M1,R1 vs everything else.
     Figure out teriyaki and rice 
     Think if less dishes need to be done or more time doing other things. - Rice and Teri might help with this, so maybe start there
+    
+    11/18 - Need to get rice cooker functionality working and need to add the rice warmer as well to help determine what rice to drop(white or basic)
+            Maybe look at ways to reduce the number of objects, or put them in a seperate folder at least so its not as cluttered.
+            Also look into making running it easier(less stuff in the command line). Think I did this in class, but dont remember name. 
+    11/28 - finish rice cooking functionality. Make the rice cooker timer decrease every cycle. Have making a fried rice reduce the number of 
+            pans in the warmer. Make a print function for the rice cooker and warmer. Also need to double check the logic for when to do dishes.
+            Finish pan_out_rice function.
+    11/30 - Remove the white rice aspect of the rice warmer object. I am already tracking it in the menu array, so adding in the object is redundant.
+            The rice cooker will still cook both, but when the rice is done cooking it will either be added to the menu_array(White) or RiceWarmer(Basic).
+            This will make tracking the servings left easier since I am already doing it for R2.
+    11/31 - Make the rice cooker timer go down and finish rice warmer/cooker functionality 
+    12/4  - Fix the rush mult. A few notes on the rusu mult:
+            >We get a rush every hour
+            >Between 11:00 - 3:00 it stays pretty constant
+            >no real break between rushes until 4:30, which is when the 4:00 rush is over
+            >from there it is hourly
+            >don't need to take register into account - just serving line
+            >takes around 20 seconds per customer - 10-30 for low and high end
+            >dont really have to deal with multiple orders 
+            ??? Need to figure out onlines
+            >during rush we serve around 50 people every 30 mins - so 100 an hour 1.6 ish people per minute
+            >generally large rush 5 mins before to 20 minutes after
+            >might just have to hard code values rather than use a function of some kind.
+    1/2/26 - Set up the project on github. Fixed the issue with orange constantly waiting. It was from an oversight
+             on my part of assigning 0 to represent Orange Chicken and also having it represent a customer not ordering an 
+             extra entree
+
 
 Plan: 
     During a rush I am making sides back to back -> Lets assume that they are calling food when there are 6 servings left
