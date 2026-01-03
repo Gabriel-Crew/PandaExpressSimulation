@@ -1,0 +1,23 @@
+
+Notes: 
+    Currently I am having issues with dish usage and waiting food. It seems that there is never a substantial dent made in the dirty dishes
+    I am assuming this is because the timing is not properly set up 
+    REMEMBER: DURING RUSH IVE HAD TO DO BACK TO BACK SIDES. this would mean in the time it takes for me to finish making a chow mein, They fully went through a rice.
+    Serving is quicker than paying, so maybe don't take that into accout
+    too many servings for sides.
+    Determin different batch sizes for different items? C1,M1,R1 vs everything else.
+    Figure out teriyaki and rice 
+    Think if less dishes need to be done or more time doing other things. - Rice and Teri might help with this, so maybe start there
+
+Plan: 
+    During a rush I am making sides back to back -> Lets assume that they are calling food when there are 6 servings left
+    -> for M1 during a rush I am making 3s which is 36 servigns (assuming propper serving size) - > 
+    this would put us at 30 servings before the next batch is called -> generally i have a little time after rice. 
+    but not after M1 -> so the 21 - 6 servings of rice can be finished in less than 6 minutes during a rush -> 
+    This would mean we are going through sides at roughly 15/6 servings a minute, so bassically 3 of at least just rice
+    I feel like roughly the same for M1 -> go through a 3 in less than 7~8 minutes -> 30/8 = 3.~ so about 6 customers a minute at peak rush
+    --> but the Orange would not be able to keep up? is the ratio off? Less Orange? 
+
+Cool Ideas: 
+
+    Animation for line and worker fatigue (emoji faces)
