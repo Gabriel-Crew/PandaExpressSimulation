@@ -170,6 +170,18 @@ void print_line(Customer *line){
     }
 }
 
+void print_time(int time){
+    int hours = 10 + (time/60);
+    int minutes = time%60;
+
+
+    if(hours < 12){
+        cout<<"Time is: "<<hours<<":"<<minutes<<" AM"<<endl;
+    }
+    else{
+        cout<<"Time is: "<<hours - 12<<":"<<minutes<<" PM"<<endl;
+    }
+}
 /*////////////////////////////////////////////////////////////
 BOH KITCHEN HELP FUNCTIONS
 */////////////////////////////////////////////////////////////
@@ -215,7 +227,7 @@ void check_fryer(){
 void wash_dishes(){
     //Dishes += 5 small 2 big 
     if(dishrack.CleanSmall < 40){
-        dishrack.CleanSmall += 3;
+        dishrack.CleanSmall += 2;
         if(dishrack.CleanSmall > 40){
             dishrack.CleanSmall = 40;
         }
@@ -768,9 +780,10 @@ void gen_line(int rush_mult, Customer *line, int &back_of_line){
     int num_of_customers = gen_rand_num(0,2) * rush_mult;
     std::cout<<"Customers Generated: "<<num_of_customers<<endl;
     for(int i = 0; i < num_of_customers; i++){
+        NUM_CUSTOMERS++;
         line[back_of_line] = gen_rand_customer();
         //print for test
-        add_for_print(line[back_of_line]);
+        //add_for_print(line[back_of_line]);
         back_of_line++;
     }
 }
@@ -818,6 +831,7 @@ void panda_sim(int print_period, int day, int l_rush_start, int l_rush_end, int 
     for (int time = 0; time < 600; time++){
         //Decrements the sim timer to begin the next minute of the sim
         food_time_decrement();
+        print_time(time);
         int rush_mult = determine_rush_mult(time);
         //takes in the rush_mult and the current line to create a new line. Also created the customer object for later use.
         gen_line(rush_mult, line, back_of_line);

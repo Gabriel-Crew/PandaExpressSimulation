@@ -46,5 +46,5 @@ Plan:
     --> but the Orange would not be able to keep up? is the ratio off? Less Orange? 
 
 Cool Ideas: 
-
+    Have it take data for the food selection percentages from a CSV instead of hard coded    
     Animation for line and worker fatigue (emoji faces)
