@@ -17,6 +17,15 @@ void RiceCooker::assign_value(string new_item, int new_time, int new_batch){
     batch = new_batch;
 }
 
+void RiceCooker::clean_ricecooker(){ 
+    //Using batch number to represent the counter for the dirty rice cooker pot
+    if(batch > 0 && item =="DIRTY"){
+        batch--;
+    }else{
+        item = "EMPTY";
+    }
+}
+
 void RiceCooker::decrement_time(){
     if(item != "EMPTY" && time > 0){
         time--;
@@ -24,7 +33,7 @@ void RiceCooker::decrement_time(){
 }
 
 bool RiceCooker::is_done(){
-    if(item != "EMPTY" && time == 0){
+    if(item != "EMPTY" && item != "DIRTY" && time == 0){
         return true;
     }else{
         return false;
@@ -38,4 +47,12 @@ bool RiceCooker::is_empty(){
     else{
         return false;
     } 
+}
+
+bool RiceCooker::is_dirty(){
+    if(item == "DIRTY"){
+        return true;
+    }else{
+        return false;
+    }
 }

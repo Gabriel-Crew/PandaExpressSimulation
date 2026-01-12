@@ -34,7 +34,12 @@ Notes:
     1/2/26 - Set up the project on github. Fixed the issue with orange constantly waiting. It was from an oversight
              on my part of assigning 0 to represent Orange Chicken and also having it represent a customer not ordering an 
              extra entree
-
+    1/8/26  - added a clock to show what time it was at each period in the simulation
+    1/10/26 - Thinking of adding objects for workers. Specifically for back of house workers, so that I can more easily deal with adding more workers
+              I think it will also allow for me to increase the time it takes to pan out the rice, so i can have it function for multiple periods.
+               -> BOH worker object - what they are working on - I guess thats it really
+     1/12/26 - Changed my mind about being able to add back of house. I have two BOH workers hard coded in and I think that will be sufficient.
+               Once more than 2 BOH are present every can be completed without issue (1 on mains, 1 on sides, and 1 on dishes). 
 
 Plan: 
     During a rush I am making sides back to back -> Lets assume that they are calling food when there are 6 servings left

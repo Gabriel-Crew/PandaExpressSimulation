@@ -225,19 +225,38 @@ void check_fryer(){
 }
 
 void wash_dishes(){
-    //Dishes += 5 small 2 big 
+    //Dishes += 2 small 1 big 
+    /**/
+    if(ricecooker.is_dirty()){
+        cout<<"><><><><><><><><>><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>><>"<<endl;
+        ricecooker.clean_ricecooker();
+    }else{
+        if(dishrack.CleanSmall < 40){
+            dishrack.CleanSmall += 2;
+            if(dishrack.CleanSmall > 40){
+                dishrack.CleanSmall = 40;
+            }
+        }
+        if(dishrack.CleanBig < 15){
+            dishrack.CleanBig += 1;
+            if(dishrack.CleanBig > 15){
+                dishrack.CleanBig = 15;
+            }
+        }
+    }
+    /*
     if(dishrack.CleanSmall < 40){
-        dishrack.CleanSmall += 2;
-        if(dishrack.CleanSmall > 40){
-            dishrack.CleanSmall = 40;
+            dishrack.CleanSmall += 2;
+            if(dishrack.CleanSmall > 40){
+                dishrack.CleanSmall = 40;
+            }
         }
-    }
-    if(dishrack.CleanBig < 15){
-        dishrack.CleanBig += 1;
-        if(dishrack.CleanBig > 15){
-            dishrack.CleanBig = 15;
-        }
-    }
+        if(dishrack.CleanBig < 15){
+            dishrack.CleanBig += 1;
+            if(dishrack.CleanBig > 15){
+                dishrack.CleanBig = 15;
+            }
+        }*/
     
 }
 
@@ -260,14 +279,12 @@ void drop_rice(){
 }
 
 void pan_out_rice(){
-    if(ricecooker.is_done()){
-        if(ricecooker.item == "Basic"){
-            ricewarmer.increase_servings();
-            ricecooker.assign_value("EMPTY",0,0);
-        }else if(ricecooker.item == "White"){
-            menu_array[14][Dish::ServingsLeft] = 60;
-            ricecooker.assign_value("EMPTY",0,0);
-        }
+    if(ricecooker.item == "Basic"){
+        ricewarmer.increase_servings();
+        ricecooker.assign_value("DIRTY",0,3);
+    }else if(ricecooker.item == "White"){
+        menu_array[14][Dish::ServingsLeft] = 60;
+        ricecooker.assign_value("DIRTY",0,3);
     }
 }
 
