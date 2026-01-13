@@ -94,6 +94,7 @@ Customer test_array[10] = {{1,2,3,4},{},{},{},{},{},{},{},{},{}};
 std::vector<std::tuple<int,int>> fryer_backlog;
 std::vector<std::tuple<int,int>> wok_backlog;
 std::vector<int> waiting_items;
+std::vector<int> time_between_m1;
 //maybe put this all in a .h? ^^^^^^^^
 
 /*////////////////////////////////////////////////////////////
@@ -136,6 +137,9 @@ void fryer_range_backlog_check_print(int line){
     print_waiting_items(line);
     std::cout<<endl;
     std::cout<<endl;
+    for(int i = 0; i < time_between_m1.size() - 1;i++){
+        cout<<"["<<time_between_m1[i] - time_between_m1[i+1]<<"], "; // print time between batches of chow mein are being made. I dont think we are going through enough to be realistic
+    }
 }
 
 void print_steam_table(){
@@ -228,7 +232,6 @@ void wash_dishes(){
     //Dishes += 2 small 1 big 
     /**/
     if(ricecooker.is_dirty()){
-        cout<<"><><><><><><><><>><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>><>"<<endl;
         ricecooker.clean_ricecooker();
     }else{
         if(dishrack.CleanSmall < 40){
@@ -530,9 +533,6 @@ void cook(int item, int batch_number){
         else if(item == SuperGreens){
             start_stir_fry(item, batch_number);
         }
-        else{
-        //    cook-white-rice
-        }
     }
    
 }
@@ -616,16 +616,22 @@ STEAM TABLE FUCNTIONS
 
 //Checks the given portion in a plate to see if it contains and item. 
 //Then reduce the items servings and if that item is low on servings then call for it to be cooked
-void scoop_n_check_servings(int min_servings, int item, int batch_number){
+void scoop_n_check_servings(int min_servings, int item, int batch_number, int time){
     if(item != EMPTY && menu_array[item][Dish::ServingsLeft] != 0){
         menu_array[item][Dish::ServingsLeft]--;
         if(menu_array[item][Dish::ServingsLeft] <= min_servings && !is_working(item)){
+            if(item == ChowMein){
+                time_between_m1.push_back(time);
+            }
             cook(item,batch_number);
         }
     }
     else if(item != EMPTY && menu_array[item][Dish::ServingsLeft] == 0){
         waiting_items.push_back(item);
         if(!is_working(item)){
+            if(item == ChowMein){
+                time_between_m1.push_back(time);
+            }
             cook(item, batch_number);
         }
     }
@@ -641,12 +647,12 @@ void grab_food(){
     check_backlog_wok();
 }
 
-void fill_order(Customer order, int min_servings){       //Have this interact with line length to determine batch size
+void fill_order(Customer order, int min_servings, int time){       //Have this interact with line length to determine batch size
     int batch_number = 2;
-    scoop_n_check_servings(min_servings,order.m_1,batch_number);
-    scoop_n_check_servings(min_servings,order.m_2,batch_number);
-    scoop_n_check_servings(min_servings,order.m_3,batch_number);
-    scoop_n_check_servings(min_servings,order.s,batch_number);
+    scoop_n_check_servings(min_servings,order.m_1,batch_number,time);
+    scoop_n_check_servings(min_servings,order.m_2,batch_number,time);
+    scoop_n_check_servings(min_servings,order.m_3,batch_number,time);
+    scoop_n_check_servings(min_servings,order.s,batch_number,time);
    
 }
 
@@ -806,10 +812,10 @@ void gen_line(int rush_mult, Customer *line, int &back_of_line){
 }
 
 //This function adds newly cooked food to the steam table and serves the next customer in line.
-void serve_line(Customer *line, int num_of_FOH, int &back_of_line, int min_servings){
+void serve_line(Customer *line, int num_of_FOH, int &back_of_line, int min_servings,int time){
     grab_food();
     for(int i = 0; i < (num_of_FOH*1); i++){
-        fill_order(line[0], min_servings);
+        fill_order(line[0], min_servings,time);
         remove_customer(line,back_of_line); // Need to add a seperate queue for waiting customers
     }
 }
@@ -853,7 +859,7 @@ void panda_sim(int print_period, int day, int l_rush_start, int l_rush_end, int 
         //takes in the rush_mult and the current line to create a new line. Also created the customer object for later use.
         gen_line(rush_mult, line, back_of_line);
         //this function is where the customer is served, portions decremented, and food is called
-        serve_line(line,num_of_FOH,back_of_line, min_servings);
+        serve_line(line,num_of_FOH,back_of_line, min_servings,time);
         //this function makes sure that all back of house duties are being taken care of when there is time (dishes,rice)
         BoH_duties();
 
