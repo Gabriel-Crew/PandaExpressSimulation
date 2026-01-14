@@ -86,6 +86,8 @@ int cook_times[15][3][2] = {{{7, 6},{8, 12},{8, 24}},  //Orange Chicken #0
                             {{45,30},{45,45},{45,60}}  //White Rice     #14
                         };
 
+//int min_servings[15] = {12,6,4,4,4,4,4,4,2,2,2,12,10}                         
+
 //int menu_array[15][2] = {{40,0},{55,0},{62,0},{69,0},{76,0},{81,0},{86,0},{91,0},{94,0},{97,0},{100,0},{40,0},{80,0},{90,0},{100,0}};
 int menu_array[15][2] = {{33,0},{49,0},{58,0},{66,0},{74,0},{80,0},{86,0},{91,0},{94,0},{97,0},{100,0},{40,0},{80,0},{90,0},{100,0}};
 
@@ -137,9 +139,6 @@ void fryer_range_backlog_check_print(int line){
     print_waiting_items(line);
     std::cout<<endl;
     std::cout<<endl;
-    for(int i = 0; i < time_between_m1.size() - 1;i++){
-        cout<<"["<<time_between_m1[i] - time_between_m1[i+1]<<"], "; // print time between batches of chow mein are being made. I dont think we are going through enough to be realistic
-    }
 }
 
 void print_steam_table(){
@@ -616,10 +615,12 @@ STEAM TABLE FUCNTIONS
 
 //Checks the given portion in a plate to see if it contains and item. 
 //Then reduce the items servings and if that item is low on servings then call for it to be cooked
-void scoop_n_check_servings(int min_servings, int item, int batch_number, int time){
+void scoop_n_check_servings(int *min_servings, int item, int batch_number, int time){
+    cout<<"BATCH NUMBER IS "<<batch_number<<endl;
+    
     if(item != EMPTY && menu_array[item][Dish::ServingsLeft] != 0){
         menu_array[item][Dish::ServingsLeft]--;
-        if(menu_array[item][Dish::ServingsLeft] <= min_servings && !is_working(item)){
+        if(menu_array[item][Dish::ServingsLeft] <= min_servings[item] && !is_working(item)){
             if(item == ChowMein){
                 time_between_m1.push_back(time);
             }
@@ -647,8 +648,19 @@ void grab_food(){
     check_backlog_wok();
 }
 
-void fill_order(Customer order, int min_servings, int time){       //Have this interact with line length to determine batch size
-    int batch_number = 2;
+//This function will determine what batch suze should be called based on the length of the line.
+int determine_batch_number(int back_of_line){
+    int batch_number;
+    if(back_of_line > 15){
+        batch_number = 2;
+    }else{
+        batch_number= 1;
+    }
+    return batch_number;
+}
+
+void fill_order(Customer order, int *min_servings, int time, int back_of_line){       //Have this interact with line length to determine batch size
+    int batch_number = determine_batch_number(back_of_line);
     scoop_n_check_servings(min_servings,order.m_1,batch_number,time);
     scoop_n_check_servings(min_servings,order.m_2,batch_number,time);
     scoop_n_check_servings(min_servings,order.m_3,batch_number,time);
@@ -812,10 +824,10 @@ void gen_line(int rush_mult, Customer *line, int &back_of_line){
 }
 
 //This function adds newly cooked food to the steam table and serves the next customer in line.
-void serve_line(Customer *line, int num_of_FOH, int &back_of_line, int min_servings,int time){
+void serve_line(Customer *line, int num_of_FOH, int &back_of_line, int *min_servings,int time){
     grab_food();
     for(int i = 0; i < (num_of_FOH*1); i++){
-        fill_order(line[0], min_servings,time);
+        fill_order(line[0], min_servings,time,back_of_line); //time is only needed for printing when m1 was made, can be removed later
         remove_customer(line,back_of_line); // Need to add a seperate queue for waiting customers
     }
 }
@@ -846,7 +858,8 @@ void panda_sim(int print_period, int day, int l_rush_start, int l_rush_end, int 
     
     int back_of_line = 0;
     int num_of_FOH = 3;
-    int min_servings = 6;
+    //int min_servings = 6;
+    int min_servings[15] = {12,6,4,4,4,4,4,4,2,2,2,12,10};
 
     //starts the day with a full steam table
     fill_steam_table();
@@ -866,6 +879,9 @@ void panda_sim(int print_period, int day, int l_rush_start, int l_rush_end, int 
         //print functions for testing
         print_steam_table();
         fryer_range_backlog_check_print(back_of_line);
+    }
+    for(int i = 0; i < time_between_m1.size() - 1;i++){
+        cout<<"["<<time_between_m1[i+1] - time_between_m1[i]<<"], "; // print time between batches of chow mein are being made. I dont think we are going through enough to be realistic
     }
 }
 

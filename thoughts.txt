@@ -40,7 +40,8 @@ Notes:
                -> BOH worker object - what they are working on - I guess thats it really
      1/12/26 - Changed my mind about being able to add back of house. I have two BOH workers hard coded in and I think that will be sufficient.
                Once more than 2 BOH are present every can be completed without issue (1 on mains, 1 on sides, and 1 on dishes). 
-
+     1/14/26 - Still need ti figure what the issue with sides is. It seems as though they are not being called enough(only called m1 11 times).
+               I'm not sure what would cause this, maybe scooping/overscooping is the issue?
 Plan: 
     During a rush I am making sides back to back -> Lets assume that they are calling food when there are 6 servings left
     -> for M1 during a rush I am making 3s which is 36 servigns (assuming propper serving size) - > 
