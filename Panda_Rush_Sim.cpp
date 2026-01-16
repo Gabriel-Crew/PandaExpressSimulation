@@ -24,6 +24,8 @@ int items_total[15] = {0};
 int mains_total[11] = {0};
 int sides_total[4] = {0};
 //^^^^^^
+int LATE_ORDERS = 0;
+int LATE_ITEMS[15] = {0};
 
 enum Mains{
     OrangeChicken,
@@ -89,7 +91,13 @@ int cook_times[15][3][2] = {{{7, 6},{8, 12},{8, 24}},  //Orange Chicken #0
 //int min_servings[15] = {12,6,4,4,4,4,4,4,2,2,2,12,10}                         
 
 //int menu_array[15][2] = {{40,0},{55,0},{62,0},{69,0},{76,0},{81,0},{86,0},{91,0},{94,0},{97,0},{100,0},{40,0},{80,0},{90,0},{100,0}};
-int menu_array[15][2] = {{33,0},{49,0},{58,0},{66,0},{74,0},{80,0},{86,0},{91,0},{94,0},{97,0},{100,0},{40,0},{80,0},{90,0},{100,0}};
+int menu_array[15][2] = {{33,0},{49,0},{58,0},{66,0},{74,0},{80,0},{86,0},{91,0},{94,0},{97,0},{100,0},{60,0},{80,0},{90,0},{100,0}};
+
+string item_names[15] = {
+                        "Orange Chicken","Teriyaki","Beijing Beef","Broccoli Beef","KungPao Chicken",
+                        "Mushroom Chicken","Sesame Chicken","Walnut Shrimp","Steak","String Bean",
+                        "Tofu", "Chow Mein", "Fried Rice", "Super Greens","White Rice"
+                        };
 
 Customer test_array[10] = {{1,2,3,4},{},{},{},{},{},{},{},{},{}};
 
@@ -185,6 +193,23 @@ void print_time(int time){
         cout<<"Time is: "<<hours - 12<<":"<<minutes<<" PM"<<endl;
     }
 }
+
+void final_print(){
+    //for(int i = 0; i < time_between_m1.size() - 1;i++){
+    //    cout<<"["<<time_between_m1[i+1] - time_between_m1[i]<<"], "; // print time between batches of chow mein are being made. I dont think we are going through enough to be realistic
+    //}
+    cout<<endl;
+
+    cout<<"************** The Store is Closed! **************"<<endl;
+    cout<<"Total Customers Served: "<<NUM_CUSTOMERS<<endl;
+    cout<<"Total late orders: "<<LATE_ORDERS<<endl;
+    for(int i = 0; i < 15; i++){
+        if(LATE_ITEMS[i] != 0){
+            cout<<"> "<<item_names[i]<<" was late "<<LATE_ITEMS[i]<<" time(s)"<<endl;
+        }
+    }
+};
+
 /*////////////////////////////////////////////////////////////
 BOH KITCHEN HELP FUNCTIONS
 */////////////////////////////////////////////////////////////
@@ -246,19 +271,6 @@ void wash_dishes(){
             }
         }
     }
-    /*
-    if(dishrack.CleanSmall < 40){
-            dishrack.CleanSmall += 2;
-            if(dishrack.CleanSmall > 40){
-                dishrack.CleanSmall = 40;
-            }
-        }
-        if(dishrack.CleanBig < 15){
-            dishrack.CleanBig += 1;
-            if(dishrack.CleanBig > 15){
-                dishrack.CleanBig = 15;
-            }
-        }*/
     
 }
 
@@ -298,8 +310,11 @@ void BoH_duties(){
     if(range.Sides.is_empty()){
         if(ricecooker.is_done()){
             pan_out_rice();
-        }else if(ricecooker.is_empty()){
-            drop_rice();
+        //FIGURE OUT LOGIC FOR THIS. IT IS ALWAYS TRYING TO PUT DOWN RICE I THINK INSTEAD OF DOING DISHES.
+        }else if(menu_array[Sides::WhiteRice][Dish::ServingsLeft] < 20 || ricewarmer.has_room()){
+            if(ricecooker.is_empty()){
+                drop_rice();
+            }
         }else{
             wash_dishes();
         }
@@ -616,7 +631,6 @@ STEAM TABLE FUCNTIONS
 //Checks the given portion in a plate to see if it contains and item. 
 //Then reduce the items servings and if that item is low on servings then call for it to be cooked
 void scoop_n_check_servings(int *min_servings, int item, int batch_number, int time){
-    cout<<"BATCH NUMBER IS "<<batch_number<<endl;
     
     if(item != EMPTY && menu_array[item][Dish::ServingsLeft] != 0){
         menu_array[item][Dish::ServingsLeft]--;
@@ -629,6 +643,8 @@ void scoop_n_check_servings(int *min_servings, int item, int batch_number, int t
     }
     else if(item != EMPTY && menu_array[item][Dish::ServingsLeft] == 0){
         waiting_items.push_back(item);
+        LATE_ORDERS++;
+        LATE_ITEMS[item]++;
         if(!is_working(item)){
             if(item == ChowMein){
                 time_between_m1.push_back(time);
@@ -659,8 +675,9 @@ int determine_batch_number(int back_of_line){
     return batch_number;
 }
 
-void fill_order(Customer order, int *min_servings, int time, int back_of_line){       //Have this interact with line length to determine batch size
+void fill_order(Customer order, int *min_servings, int time, int back_of_line){
     int batch_number = determine_batch_number(back_of_line);
+    //int batch_number = 2;
     scoop_n_check_servings(min_servings,order.m_1,batch_number,time);
     scoop_n_check_servings(min_servings,order.m_2,batch_number,time);
     scoop_n_check_servings(min_servings,order.m_3,batch_number,time);
@@ -813,7 +830,7 @@ void add_for_print(Customer customer){
 void gen_line(int rush_mult, Customer *line, int &back_of_line){
     //add print so that I can make sure that each item is being chosen with the expected frequency
     int num_of_customers = gen_rand_num(0,2) * rush_mult;
-    std::cout<<"Customers Generated: "<<num_of_customers<<endl;
+    //std::cout<<"Customers Generated: "<<num_of_customers<<endl;
     for(int i = 0; i < num_of_customers; i++){
         NUM_CUSTOMERS++;
         line[back_of_line] = gen_rand_customer();
@@ -858,8 +875,7 @@ void panda_sim(int print_period, int day, int l_rush_start, int l_rush_end, int 
     
     int back_of_line = 0;
     int num_of_FOH = 3;
-    //int min_servings = 6;
-    int min_servings[15] = {12,6,4,4,4,4,4,4,2,2,2,12,10};
+    int min_servings[15] = {18,6,4,4,4,4,4,4,2,2,2,12,10};
 
     //starts the day with a full steam table
     fill_steam_table();
@@ -867,7 +883,6 @@ void panda_sim(int print_period, int day, int l_rush_start, int l_rush_end, int 
     for (int time = 0; time < 600; time++){
         //Decrements the sim timer to begin the next minute of the sim
         food_time_decrement();
-        print_time(time);
         int rush_mult = determine_rush_mult(time);
         //takes in the rush_mult and the current line to create a new line. Also created the customer object for later use.
         gen_line(rush_mult, line, back_of_line);
@@ -877,21 +892,23 @@ void panda_sim(int print_period, int day, int l_rush_start, int l_rush_end, int 
         BoH_duties();
 
         //print functions for testing
-        print_steam_table();
-        fryer_range_backlog_check_print(back_of_line);
+        if(time%print_period == 0){
+            print_time(time);
+            print_steam_table();
+            fryer_range_backlog_check_print(back_of_line);
+        }
     }
-    for(int i = 0; i < time_between_m1.size() - 1;i++){
-        cout<<"["<<time_between_m1[i+1] - time_between_m1[i]<<"], "; // print time between batches of chow mein are being made. I dont think we are going through enough to be realistic
-    }
+
+    final_print();
 }
 
 int main(){
     std::cout << "Welcome to the Panda Express BOH Simulator"<< endl;
 
-    int print_period = 10, day = 600; //Simulation will be running at 10 periods(minutes) per second for a day (600 minutes)
+    int print_period = 1, day = 600; //Simulation will be running at 10 periods(minutes) per second for a day (600 minutes)
     int l_rush_start = 100, l_rush_end = 280; // begining and end times for the lunch rush. this will add a multiplier to business
     int d_rush_start = 430, d_rush_end = 550; // begining and end times for dinner rush. Functions the same as lunch rush
-    Customer line[1024];
+    Customer line[2048];
 
     srand((time(0)));
     
